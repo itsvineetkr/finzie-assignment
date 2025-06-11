@@ -12,17 +12,14 @@ async def receive_vapi_event(request: Request):
     """Webhook endpoint to receive Vapi events"""
     try:
         data = await request.json()
-        print(data)
+        # print(data)
         event_type = data.get("message", {}).get("type", "unknown")
 
         logger.info(f"Incoming event from Vapi: {event_type}")
 
-        print("save to karne ja rhe hai bhai")
         # Save all call data to database
         save_call_data(data.get("message", {}))
-
-        print("save function to run ho gya bhai")
-
+        
         # Handle different event types
         if event_type == "status-update":
             logger.info("Call status update received")
