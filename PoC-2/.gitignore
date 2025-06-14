@@ -1,0 +1,4 @@
+.venv
+support_system.db
+support_system.log
+__pycache__/

@@ -1,0 +1,9 @@
+OPENAI_API_KEY=your_openai_api_key_here
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=your_twilio_phone_number
+SENDGRID_API_KEY=your_sendgrid_api_key
+SENDGRID_FROM_EMAIL=your_verified_sendgrid_email
+DATABASE_URL=sqlite:///./support_system.db
+# For PostgreSQL: postgresql://user:password@localhost/dbname
+LOG_LEVEL=INFO

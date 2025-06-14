@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Multi-Agent Chat Support System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <!-- Sidebar -->
+            <div class="col-md-3 bg-dark text-white p-0">
+                <div class="sidebar">
+                    <div class="sidebar-header p-3">
+                        <h4><i class="fas fa-robot me-2"></i>AI Support System</h4>
+                        <small class="text-muted">Multi-Agent Chat Support</small>
+                    </div>
+                    
+                    <div class="sidebar-content p-3">
+                        <div class="mb-4">
+                            <h6>Session Info</h6>
+                            <div class="session-info">
+                                <small>Session ID: <span id="sessionId">-</span></small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>Contact Information</h6>
+                            <div class="mb-2">
+                                <input type="email" class="form-control form-control-sm" id="customerEmail" placeholder="Your email (optional)">
+                            </div>
+                            <div class="mb-2">
+                                <input type="tel" class="form-control form-control-sm" id="customerPhone" placeholder="Your phone (optional)">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>Agent Status</h6>
+                            <div id="agentStatus">
+                                <div class="agent-status-item">
+                                    <i class="fas fa-circle text-success"></i>
+                                    <small>System Ready</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>Quick Actions</h6>
+                            <button class="btn btn-outline-light btn-sm w-100 mb-2" onclick="clearChat()">
+                                <i class="fas fa-trash me-1"></i>Clear Chat
+                            </button>
+                            <button class="btn btn-outline-light btn-sm w-100 mb-2" onclick="checkAgentStatus()">
+                                <i class="fas fa-sync me-1"></i>Check Status
+                            </button>
+                        </div>
+                        
+                        <div class="mt-auto">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                AI-powered support with multiple specialized agents
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Chat Area -->
+            <div class="col-md-9 d-flex flex-column h-100 p-0">
+                <!-- Chat Header -->
+                <div class="chat-header bg-light border-bottom p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">Customer Support Chat</h5>
+                            <small class="text-muted">
+                                <span id="currentAgent">Ready to help</span> | 
+                                <span id="lastIntent">-</span>
+                            </small>
+                        </div>
+                        <div class="chat-controls">
+                            <button class="btn btn-outline-primary btn-sm" onclick="testIntentClassification()">
+                                <i class="fas fa-brain me-1"></i>Test Intent
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Messages -->
+                <div class="chat-container flex-grow-1 p-3" id="chatContainer">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot-message">
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <strong>AI Support Assistant</strong>
+                                    <small class="text-muted">System</small>
+                                </div>
+                                <div class="message-text">
+                                    Hello! I'm your AI support assistant. I can help you with:
+                                    <ul class="mt-2 mb-0">
+                                        <li>Frequently asked questions</li>
+                                        <li>Account-related inquiries</li>
+                                        <li>Filing complaints and creating support tickets</li>
+                                        <li>General support and guidance</li>
+                                    </ul>
+                                    How can I help you today?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Input -->
+                <div class="chat-input-container bg-light border-top p-3">
+                    <div class="row g-2">
+                        <div class="col">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="messageInput" 
+                                       placeholder="Type your message here..." maxlength="1000">
+                                <button class="btn btn-primary" type="button" onclick="sendMessage()" id="sendButton">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <small class="text-muted">
+                                <span id="typingIndicator" class="d-none">
+                                    <i class="fas fa-spinner fa-spin me-1"></i>Processing...
+                                </span>
+                                <span id="messageCounter">0/1000 characters</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-4">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <div>Processing your request...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Intent Test Modal -->
+    <div class="modal fade" id="intentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Intent Classification Test</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="testMessage" class="form-label">Test Message</label>
+                        <textarea class="form-control" id="testMessage" rows="3" 
+                                  placeholder="Enter a message to test intent classification..."></textarea>
+                    </div>
+                    <div id="intentResult" class="d-none">
+                        <h6>Classification Result:</h6>
+                        <div class="alert alert-info">
+                            <strong>Intent:</strong> <span id="detectedIntent"></span><br>
+                            <strong>Confidence:</strong> <span id="intentConfidence"></span><br>
+                            <strong>Reasoning:</strong> <span id="intentReasoning"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="classifyTestIntent()">Classify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/chat.js"></script>
+</body>
+</html>
