@@ -1,7 +1,5 @@
 # AI Multi-Agent Chat Support System (PoC-2)
 
-A sophisticated multi-agent architecture using Python + FastAPI to automate customer support chat interactions.
-
 ## Features
 
 - **Multi-Agent Architecture**: Specialized agents for different types of customer inquiries
@@ -33,7 +31,7 @@ User Query → Intent Classifier → Router → Support Agent → Notification A
 
 2. **Configure Environment**
    ```bash
-   cp .env.example .env
+   cp .example_env .env
    # Edit .env with your API keys
    ```
 
@@ -63,10 +61,6 @@ TWILIO_PHONE_NUMBER=your_twilio_phone_number
 SENDGRID_API_KEY=your_sendgrid_api_key
 SENDGRID_FROM_EMAIL=your_verified_sendgrid_email
 
-# Database
-DATABASE_URL=sqlite:///./support_system.db
-# For PostgreSQL: postgresql://user:password@localhost/dbname
-
 # Logging
 LOG_LEVEL=INFO
 ```
@@ -95,11 +89,6 @@ Content-Type: application/json
   "message": "I want to cancel my subscription"
 }
 ```
-
-### Other Endpoints
-- `GET /api/health` - Health check
-- `GET /api/agent-status` - Agent system status
-- `GET /api/chat-history/{session_id}` - Chat history
 
 ## Agent System
 
@@ -164,21 +153,6 @@ Content-Type: application/json
 └── templates/              # HTML templates
 ```
 
-### Running Tests
-```bash
-# Test intent classification
-curl -X POST "http://localhost:8000/api/classify-intent" \
-  -H "Content-Type: application/json" \
-  -d '{"message": "How do I reset my password?"}'
-
-# Test chat endpoint
-curl -X POST "http://localhost:8000/api/chat" \
-  -H "Content-Type: application/json" \
-  -d '{"message": "I have a problem with my account", "customer_email": "test@example.com"}'
-```
-
-## Deployment
-
 ### Docker Deployment
 ```dockerfile
 FROM python:3.9-slim
@@ -189,34 +163,3 @@ COPY . .
 EXPOSE 8000
 CMD ["python", "main.py"]
 ```
-
-### Production Considerations
-- Use PostgreSQL for production database
-- Configure proper logging and monitoring
-- Set up SSL/TLS certificates
-- Implement rate limiting
-- Add authentication for admin endpoints
-
-## Troubleshooting
-
-### Common Issues
-
-1. **OpenAI API Issues**
-   - Ensure valid API key is set
-   - System falls back to keyword classification automatically
-
-2. **Database Connection Issues**
-   - Check DATABASE_URL configuration
-   - Ensure database permissions
-
-3. **Notification Failures**
-   - Verify Twilio/SendGrid credentials
-   - Check recipient format (email/phone)
-
-## License
-
-This project is for demonstration purposes as part of a Proof of Concept (PoC-2).
-
-## Support
-
-For questions and support, please refer to the system documentation or contact the development team.
